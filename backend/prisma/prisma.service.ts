@@ -7,7 +7,6 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
-  // eslint-disable-next-line prettier/prettier
   async onModuleInit() {
     await this.$connect();
   }
