@@ -23,6 +23,17 @@ export class AuthController {
     );
   }
 
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('register')
+  async signUp(@Body() signUpDto: Record<string, any>) {
+    return await this.authService.signUp(
+      signUpDto.username,
+      signUpDto.password,
+      signUpDto.email,
+    );
+  }
+
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
