@@ -1,7 +1,17 @@
 import { SignInLink, SignUpLink } from "../../../shared";
-import { Layout } from "antd";
+import { Button, Layout } from "antd";
 const { Header } = Layout;
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 export const MainHeader = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      setIsAuthenticated(true);
+    }
+  }, []);
   return (
     <Header
       style={{
@@ -10,10 +20,22 @@ export const MainHeader = () => {
         alignItems: "center",
       }}
     >
-      <div style={{ color: "white", fontSize: "1.5rem" }}>Short Url</div>
+      <Link to="/">
+        <div style={{ color: "white", fontSize: "1.5rem", cursor: "pointer" }}>
+          Short Url
+        </div>
+      </Link>
       <div>
-        <SignInLink />
-        <SignUpLink />
+        {isAuthenticated ? (
+          <Link to="/profile">
+            <Button>My Profile</Button>
+          </Link>
+        ) : (
+          <div>
+            <SignInLink />
+            <SignUpLink />
+          </div>
+        )}
       </div>
     </Header>
   );
