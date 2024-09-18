@@ -1,39 +1,32 @@
-import { Button, Form, Input, Flex } from "antd";
+import { Button, Form, Input, Flex, Modal } from "antd";
 import { postData } from "../api/postOriginalUrl";
 import { useMutation } from "@tanstack/react-query";
 import { CopyOutlined } from "@ant-design/icons";
+import { useState } from "react";
 
-interface ShortUrlResponse {
-  shortUrl: string;
-  originalUrl: string;
-}
-
-const getShortUrlsFromLocalStorage = (): ShortUrlResponse[] => {
-  const shortUrls = localStorage.getItem("shortUrls");
-  return shortUrls ? JSON.parse(shortUrls) : [];
-};
-
-const saveShortUrlsToLocalStorage = (shortUrls: ShortUrlResponse[]) => {
-  localStorage.setItem("shortUrls", JSON.stringify(shortUrls));
-};
 export const ShortUrlForm = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const { mutate, isError, error, data } = useMutation({
     mutationFn: postData,
-    onSuccess: (data: ShortUrlResponse) => {
-      const shortUrls = getShortUrlsFromLocalStorage();
-      const isUrlExists = shortUrls.some(
-        (url) => url.originalUrl === data.originalUrl
-      );
-      if (!isUrlExists) {
-        shortUrls.push(data);
-        saveShortUrlsToLocalStorage(shortUrls);
-      }
-    },
   });
 
-  const onFinish = (url: string) => {
-    mutate(url);
+  const onFinish = (values: { url: string }) => {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      setIsModalVisible(true);
+    } else {
+      mutate({ url: values.url });
+    }
   };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
   return (
     <Flex
       style={{
@@ -94,6 +87,23 @@ export const ShortUrlForm = () => {
             />
           </Flex>
         )}
+
+        <Modal
+          title="Please log in or register"
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          footer={[
+            <Button key="login" type="primary" href="/signin">
+              Log in
+            </Button>,
+            <Button key="register" type="default" href="/signup">
+              Register
+            </Button>,
+          ]}
+        >
+          <p>You need to log in or register to shorten URLs.</p>
+        </Modal>
       </div>
     </Flex>
   );

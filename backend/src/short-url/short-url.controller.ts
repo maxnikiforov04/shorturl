@@ -1,35 +1,47 @@
-import { Controller, Get, Param, Post, Body, Res } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  Get,
+  NotFoundException,
+  Res,
+} from '@nestjs/common';
 import { ShortUrlService } from './short-url.service';
-import { Response } from 'express';
 import { Public } from 'src/auth/auth.guard';
+import { Response } from 'express';
 
-@Controller()
+@Controller('')
 export class ShortUrlController {
-  constructor(private readonly ShortUrlService: ShortUrlService) {}
-
+  constructor(private readonly shortUrlService: ShortUrlService) {}
   @Public()
   @Post('shorten')
-  async shorten(@Body() body: { url: string }) {
-    return await this.ShortUrlService.shortenUrl(body.url);
+  async shortenUrl(
+    @Body('originalUrl') originalUrl: string,
+    @Body('userId') userId: number,
+  ) {
+    const link = await this.shortUrlService.shortenUrl(originalUrl, userId);
+    return { shortUrl: link.shortUrl };
+  }
+  @Public()
+  @Get('user-links/:userId')
+  async getUserLinks(@Param('userId') userId: number) {
+    const links = await this.shortUrlService.getUserLinks(userId);
+    return { links };
   }
   @Public()
   @Get('expand/:shortUrl')
-  async expand(@Param('shortUrl') shortUrl: string) {
-    const baseUrl = await this.ShortUrlService.expandUrl(shortUrl);
-    if (!baseUrl) {
-      return {
-        message: 'URL not found',
-        statusCode: 404,
-      };
+  async expandUrl(@Param('shortUrl') shortUrl: string) {
+    const originalUrl = await this.shortUrlService.expandUrl(shortUrl);
+    if (!originalUrl) {
+      throw new NotFoundException('Short URL not found');
     }
-    return {
-      baseUrl,
-    };
+    return { originalUrl };
   }
   @Public()
   @Get(':shortUrl')
   async redirect(@Param('shortUrl') shortUrl: string, @Res() res: Response) {
-    const originalUrl = await this.ShortUrlService.expandUrl(shortUrl);
+    const originalUrl = await this.shortUrlService.expandUrl(shortUrl);
     return res.redirect(originalUrl);
   }
 }

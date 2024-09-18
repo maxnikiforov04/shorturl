@@ -6,9 +6,9 @@ import { nanoid } from 'nanoid';
 export class ShortUrlService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async shortenUrl(originalUrl: string) {
+  async shortenUrl(originalUrl: string, userId: number) {
     const shortUrl = this.generateShortUrl();
-    return await this.prisma.link.upsert({
+    const link = await this.prisma.link.upsert({
       where: { originalUrl },
       update: {},
       create: {
@@ -16,6 +16,30 @@ export class ShortUrlService {
         shortUrl,
       },
     });
+    await this.prisma.userLink.upsert({
+      where: {
+        userId_linkId: {
+          userId,
+          linkId: link.id,
+        },
+      },
+      update: {},
+      create: {
+        userId,
+        linkId: link.id,
+      },
+    });
+
+    return link;
+  }
+
+  async getUserLinks(userId: number) {
+    const userLinks = await this.prisma.userLink.findMany({
+      where: { userId: Number(userId) },
+      include: { link: true },
+    });
+
+    return userLinks.map((userLink) => userLink.link);
   }
 
   async expandUrl(shortUrl: string) {
@@ -26,6 +50,6 @@ export class ShortUrlService {
   }
 
   private generateShortUrl(): string {
-    return nanoid(10); // Генерация короткой ссылки длиной 10 символов
+    return nanoid(10);
   }
 }

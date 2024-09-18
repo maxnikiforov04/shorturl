@@ -22,6 +22,17 @@ export class AuthService {
       user,
     };
   }
+
+  async resetUserPassword(email: string, newPassword: string) {
+    const user = await this.prisma.user.update({
+      where: { email: email },
+      data: {
+        password: newPassword,
+      },
+    });
+    return user;
+  }
+
   async signUp(email: string, username: string, password: string) {
     const existingUsername = await this.prisma.user.findUnique({
       where: { username },

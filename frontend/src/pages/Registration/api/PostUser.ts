@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IUser } from "../model/User";
+import { IUser } from "../../../entities/model/User";
 
 export const PostUser = async (user: IUser) => {
   try {

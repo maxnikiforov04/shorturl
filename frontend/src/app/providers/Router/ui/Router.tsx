@@ -4,6 +4,7 @@ import {
   MainPage,
   Profile,
   Registration,
+  Reset,
 } from "../../../../pages";
 
 export const baseRouter = createBrowserRouter([
@@ -22,5 +23,9 @@ export const baseRouter = createBrowserRouter([
   {
     path: "signin",
     element: <Authorization />,
+  },
+  {
+    path: "reset",
+    element: <Reset />,
   },
 ]);

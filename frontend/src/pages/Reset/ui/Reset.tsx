@@ -3,10 +3,9 @@ import { useMutation } from "@tanstack/react-query";
 import { Button, Form, Input, Flex, notification } from "antd";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { IUser } from "../../../entities/model/User";
-import { PostUser } from "../api/PostUser";
 import { useNavigate } from "react-router-dom";
 
-export const Registration = () => {
+export const Reset = () => {
   const { register } = useForm<IUser>();
   const navigate = useNavigate();
   const { mutate, isError, error } = useMutation({

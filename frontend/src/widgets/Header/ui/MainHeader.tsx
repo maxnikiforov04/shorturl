@@ -1,11 +1,39 @@
+import { DownOutlined } from "@ant-design/icons";
 import { SignInLink, SignUpLink } from "../../../shared";
-import { Button, Layout } from "antd";
+import { Dropdown, Layout, Space } from "antd";
 const { Header } = Layout;
+import type { MenuProps } from "antd";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 export const MainHeader = () => {
+  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const items: MenuProps["items"] = [
+    {
+      key: "1",
+      label: (
+        <Link rel="noopener noreferrer" to="/profile">
+          Profile
+        </Link>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <a
+          onClick={() => {
+            localStorage.removeItem("user");
+            setIsAuthenticated(false);
+            navigate("/");
+          }}
+          rel="noopener noreferrer"
+        >
+          exit
+        </a>
+      ),
+      danger: true,
+    },
+  ];
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (user) {
@@ -27,9 +55,14 @@ export const MainHeader = () => {
       </Link>
       <div>
         {isAuthenticated ? (
-          <Link to="/profile">
-            <Button>My Profile</Button>
-          </Link>
+          <Dropdown menu={{ items }}>
+            <a onClick={(e) => e.preventDefault()}>
+              <Space>
+                Hover me
+                <DownOutlined />
+              </Space>
+            </a>
+          </Dropdown>
         ) : (
           <div>
             <SignInLink />

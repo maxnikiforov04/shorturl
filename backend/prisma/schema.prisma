@@ -8,19 +8,32 @@ datasource db {
 }
 
 model Link {
-  id          Int      @id @default(autoincrement())
-  originalUrl String   @unique
-  shortUrl    String   @unique @db.VarChar(10)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          Int        @id @default(autoincrement())
+  originalUrl String     @unique
+  shortUrl    String     @unique @db.VarChar(10)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  userLinks   UserLink[]
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  email     String @unique @db.VarChar(50)
-  username  String @unique @db.VarChar(50)
-  firstname String @default("") @db.VarChar(50)
-  lastname  String @default("") @db.VarChar(50)
-  about     String @default("")
-  password  String @db.VarChar(50)
+  id        Int        @id @default(autoincrement())
+  email     String     @unique @db.VarChar(50)
+  username  String     @unique @db.VarChar(50)
+  firstname String     @default("") @db.VarChar(50)
+  lastname  String     @default("") @db.VarChar(50)
+  about     String     @default("")
+  password  String     @db.VarChar(50)
+  userLinks UserLink[]
+}
+
+model UserLink {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  linkId    Int
+  link      Link     @relation(fields: [linkId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, linkId])
 }
