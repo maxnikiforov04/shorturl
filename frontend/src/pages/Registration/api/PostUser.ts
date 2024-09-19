@@ -7,7 +7,7 @@ export const PostUser = async (user: IUser) => {
       "http://localhost:3000/auth/register",
       user
     );
-
+    localStorage.setItem("user", JSON.stringify(response.data));
     console.log(response.data);
     return response.data;
   } catch (error) {

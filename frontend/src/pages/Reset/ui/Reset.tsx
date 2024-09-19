@@ -1,26 +1,31 @@
-import { LockOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
+import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { Button, Form, Input, Flex, notification } from "antd";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { IUser } from "../../../entities/model/User";
 import { useNavigate } from "react-router-dom";
+import { updateUserData } from "../api/updateUserData";
+import { UpdateUserDataParams } from "../model/upUser";
 
 export const Reset = () => {
-  const { register } = useForm<IUser>();
+  const { register } = useForm();
   const navigate = useNavigate();
-  const { mutate, isError, error } = useMutation({
-    mutationFn: PostUser,
+  const { mutate } = useMutation({
+    mutationFn: updateUserData,
     onError: (error) => {
       notification.error({
-        message: "This user already exists",
+        message: "Failed to update password",
         description: error.message,
       });
     },
     onSuccess: () => {
+      notification.success({
+        message: "Password updated successfully",
+      });
       navigate("/");
     },
   });
-  const onSubmit: SubmitHandler<IUser> = (data) => {
+
+  const onSubmit: SubmitHandler<UpdateUserDataParams> = (data) => {
     mutate(data);
   };
 
@@ -50,33 +55,35 @@ export const Reset = () => {
           />
         </Form.Item>
         <Form.Item
-          name="username"
-          rules={[{ required: true, message: "Please input your Username!" }]}
-        >
-          <Input
-            prefix={<UserOutlined />}
-            placeholder="Username"
-            {...register("userName")}
-          />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          rules={[{ required: true, message: "Please input your Password!" }]}
+          name="checkedPassword"
+          rules={[
+            { required: true, message: "Please input your Current Password!" },
+          ]}
         >
           <Input
             prefix={<LockOutlined />}
             type="password"
-            placeholder="Password"
-            {...register("password")}
+            placeholder="Current Password"
+            {...register("checkedPassword")}
           />
         </Form.Item>
-        <Form.Item>
-          <a href="">Forgot password</a>
+        <Form.Item
+          name="newPassword"
+          rules={[
+            { required: true, message: "Please input your New Password!" },
+          ]}
+        >
+          <Input
+            prefix={<LockOutlined />}
+            type="password"
+            placeholder="New Password"
+            {...register("newPassword")}
+          />
         </Form.Item>
 
         <Form.Item>
           <Button block type="primary" htmlType="submit">
-            Register
+            Reset
           </Button>
           or <a href="/signin">Log in now!</a>
         </Form.Item>

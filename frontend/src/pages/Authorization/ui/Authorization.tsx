@@ -9,7 +9,7 @@ import { CheckUserData } from "../api/CheckUserData";
 export const Authorization = () => {
   const { register } = useForm<LogUser>();
   const navigate = useNavigate();
-  const { mutate, isError, error } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: CheckUserData,
     onError: (error) => {
       notification.error({

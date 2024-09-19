@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 export const Registration = () => {
   const { register } = useForm<IUser>();
   const navigate = useNavigate();
-  const { mutate, isError, error } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: PostUser,
     onError: (error) => {
       notification.error({

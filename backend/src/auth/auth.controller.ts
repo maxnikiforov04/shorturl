@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  HttpException,
   Post,
   Request,
 } from '@nestjs/common';
@@ -25,13 +26,36 @@ export class AuthController {
 
   @Public()
   @HttpCode(HttpStatus.OK)
+  @Post('reset-password')
+  async resetPassword(
+    @Body('email') email: string,
+    @Body('newPassword') newPassword: string,
+    @Body('checkedPassword') checkedPassword: string,
+  ) {
+    try {
+      const user = await this.authService.resetUserPassword(
+        email,
+        newPassword,
+        checkedPassword,
+      );
+      return user;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        'Failed to reset password',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+  @Public()
+  @HttpCode(HttpStatus.OK)
   @Post('register')
-  async signUp(@Body() signUpDto: Record<string, any>) {
-    return await this.authService.signUp(
-      signUpDto.username,
-      signUpDto.password,
-      signUpDto.email,
-    );
+  async signUp(
+    @Body('email') email: string,
+    @Body('username') username: string,
+    @Body('password') password: string,
+  ) {
+    return await this.authService.signUp(email, username, password);
   }
 
   @Get('profile')
