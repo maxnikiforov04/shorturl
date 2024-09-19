@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 export const MainHeader = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [data, setData] = useState<{ username: string }>();
   const items: MenuProps["items"] = [
     {
       key: "1",
@@ -37,7 +38,9 @@ export const MainHeader = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (user) {
+      const dataUser = JSON.parse(user);
       setIsAuthenticated(true);
+      setData({ username: dataUser?.username });
     }
   }, []);
   return (
@@ -58,7 +61,7 @@ export const MainHeader = () => {
           <Dropdown menu={{ items }}>
             <a onClick={(e) => e.preventDefault()}>
               <Space>
-                Hover me
+                {data?.username}
                 <DownOutlined />
               </Space>
             </a>

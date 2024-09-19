@@ -83,7 +83,14 @@ export const UrlList = () => {
                   }}
                 >
                   <Card>
-                    <Button>http://localhost:3000/{item.shortUrl}</Button>
+                    <Button
+                      onClick={() => {
+                        window.location.href =
+                          "http://localhost:3000/" + item.shortUrl;
+                      }}
+                    >
+                      http://localhost:3000/{item.shortUrl}
+                    </Button>
                     <div>
                       <strong>Original URL:</strong> {item.originalUrl}
                     </div>

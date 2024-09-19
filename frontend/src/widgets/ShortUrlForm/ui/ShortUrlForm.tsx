@@ -1,4 +1,4 @@
-import { Button, Form, Input, Flex, Modal } from "antd";
+import { Button, Form, Input, Flex, Modal, QRCode, Space } from "antd";
 import { postData } from "../api/postOriginalUrl";
 import { useMutation } from "@tanstack/react-query";
 import { CopyOutlined } from "@ant-design/icons";
@@ -39,7 +39,7 @@ export const ShortUrlForm = () => {
         <Form
           name="login"
           initialValues={{ remember: true }}
-          style={{ maxWidth: 600 }}
+          style={{ maxWidth: "100%" }}
           onFinish={onFinish}
         >
           <Flex>
@@ -50,7 +50,7 @@ export const ShortUrlForm = () => {
               <Input
                 placeholder="URL"
                 type="url"
-                style={{ height: 60, width: 520, fontSize: 20 }}
+                style={{ height: 60, width: 500, minWidth: 300, fontSize: 20 }}
               />
             </Form.Item>
             <Form.Item style={{ textAlign: "center" }}>
@@ -68,16 +68,17 @@ export const ShortUrlForm = () => {
         {isError && <div>Error: {error.message}</div>}
 
         {data && (
-          <Flex style={{ justifyContent: "space-between", maxWidth: "10rem" }}>
+          <Flex style={{ justifyContent: "space-between", maxWidth: "100%" }}>
             <Button
+              style={{ height: "3rem" }}
               onClick={() => {
                 window.location.href = "http://localhost:3000/" + data.shortUrl;
               }}
             >
-              {data.shortUrl}
+              http://localhost:3000/{data.shortUrl}
             </Button>
             <Button
-              style={{ borderRadius: "100%" }}
+              style={{ borderRadius: "100%", height: "3rem", width: "3rem" }}
               icon={<CopyOutlined />}
               onClick={() => {
                 navigator.clipboard.writeText(
@@ -85,6 +86,9 @@ export const ShortUrlForm = () => {
                 );
               }}
             />
+            <Space direction="vertical" align="center">
+              <QRCode value={"http://localhost:3000/" + data.shortUrl} />
+            </Space>
           </Flex>
         )}
 
